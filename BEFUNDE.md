@@ -75,3 +75,9 @@ Der neue C++17-Leser verarbeitet nur den übergebenen Dateiinhalt. Die WebAssemb
 | Hardware | Keine Konsole verbunden. Keine PS5-Firmware, laufende Spielinstanz, Anzeige, HEN-Komponente oder Menüfunktion auf echter Hardware getestet. Für die PS5 liegt auch kein neuer Build vor. |
 
 Die Logbeispiele der Tests sind synthetisch. Die beiden PRX-Prüfungen verwendeten die echten Upstream-Dateien. Die Befunde gelten für den Leser und die identifizierten Artefakte. Compiler-, Sanitizer- oder Browsertests des Lesers liefern keine Kompatibilitätsaussage für die Konsole.
+
+## Nachprüfung vom 27. November um 16:48 UTC
+
+Im Original ist weiterhin v1.1 das jüngste Release. Auch die vier anderen direkten Forks haben keine neue Moduldatei veröffentlicht. Die jüngste Rückfrage in Issue 1 klärt den damals verwendeten Ladeweg nicht. [Originalreleases](https://github.com/OnlyMoisties/basic-menu-src/releases) · [Rückfrage vom 27. November](https://github.com/OnlyMoisties/basic-menu-src/issues/1#issuecomment-7218500810)
+
+Zwei weitere Projekte für denselben Titel wurden auf ihre Aussagekraft für den geplanten Test geprüft. deFIATers Sammlung beschreibt einzelne Spiel- und Grafikänderungen über XML. Eizovoids Firmwarebericht zu 13.60 betrifft das Beenden einer Spielesitzung. In beiden geprüften Projektständen fand sich kein Test dieses Basic-Menu-Moduls auf 13.60. [Beschreibung der ersten Sammlung](https://github.com/deFIATer/ps-patch-miami-complete-edition/tree/2672e186cbb7ab45c6313f2b1469676bbf3f80e9) · [Beschreibung der zweiten Sammlung](https://github.com/Eizovoid/gta-vi-ps5-patches/tree/1f7f74e40b578174b88d2a782d1c8368fd11b3e7)
