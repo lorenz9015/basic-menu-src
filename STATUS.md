@@ -2,6 +2,8 @@
 
 **PS5-Releasekandidat gesperrt.** Das bereitgestellte Original bezieht sich auf GTA VI für PS5. XeMo dokumentiert Tests ausschließlich für Firmware 7.40 und die Kombination `PPSA38500 / 01.002.001`. Für das konkrete Menü auf Firmware 13.60 liegen im geprüften Upstream zwei Fehlermeldungen und kein erfolgreicher, dieser Binärdatei zuordenbarer Durchlauf vor. Deine Meldung über etaHEN und kstuff beschreibt die Ausgangslage. Versionen der installierten Komponenten und Spielbuild auf deiner Konsole wurden nicht gemessen. [Upstream-Release](https://github.com/OnlyMoisties/basic-menu-src/releases/tag/v1.1-2026-11-26) · [Issue 1 und Kommentare](https://github.com/OnlyMoisties/basic-menu-src/issues/1)
 
+**Nachprüfung am 27. November 2026 um 12:39 UTC.** Der jüngste Kommentar in Issue 1 fragt nach dem verwendeten Ladeweg. Er enthält weder ein Testergebnis noch ein Protokoll. Upstream-Commit, beide Originalreleases und die geprüften Codezweige der anderen direkten Forks entsprechen weiterhin dem dokumentierten Stand. Für den Auftraggeber ist aktuell kein Schritt auf der Konsole oder am Rechner erforderlich. [Kommentar vom 27. November](https://github.com/OnlyMoisties/basic-menu-src/issues/1#issuecomment-7218500810)
+
 ## Was vorliegt
 
 | Abnahmekriterium | Stand |
