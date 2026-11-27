@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Basic Menu · Lokale Diagnose</title>
+<style>
+:root{color-scheme:light dark;font:100%/1.55 Inter,system-ui,sans-serif;color:#192c34;background:#f6f8f6}
+body{max-width:48rem;margin:auto;padding:2rem 1.2rem 3rem}h1,h2{line-height:1.2}h1{font-size:clamp(1.8rem,5vw,2.5rem);margin:.25rem 0}
+h2{font-size:1.2rem;margin:0 0 .6rem}header{padding-bottom:.8rem}.target{font-size:.95rem;color:#38525a}
+section{padding:1.2rem 0;border-top:1px solid #8ba0a5}label{display:block;font-weight:650}input{display:block;margin-top:.45rem;max-width:100%}
+output{display:block;white-space:pre-wrap;overflow-wrap:anywhere;margin:1rem 0 0}.decision{border-left:.3rem solid #964314;padding:.7rem 1rem;background:#fff0de;color:#492810}
+@media(prefers-color-scheme:dark){:root{color:#e7eeec;background:#182327}.target{color:#aeccce}.decision{color:#ffddbc;background:#36261b;border-color:#ec995e}}
+</style>
+<main>
+<header><p class="target">GTA VI · PS5 · Zielfirmware 13.60</p><h1>Basic Menu prüfen</h1>
+<p class="decision"><strong>Hardwaretest zurückgestellt.</strong> Für diesen Stand fehlt ein freigabefähiges PS5-Modul.</p>
+<p>Falls du bereits Dateien hast, kannst du sie hier auf deinem Rechner auswerten. Die Seite verarbeitet sie lokal. Für den Prüfbericht brauchst du keine Datei von deiner Konsole.</p></header>
+<section aria-labelledby="log-heading"><h2 id="log-heading">Vorhandenes Menüprotokoll</h2>
+<label for="log">menu.log auswählen</label><input id="log" type="file" accept=".log,.txt,text/plain">
+<output id="log-result" for="log" aria-live="polite">Im Original wird das Protokoll an /data/BasicMenu/menu.log angehängt. Fehlt es, bleibt offen, wie weit der Start kam.</output></section>
+<section aria-labelledby="asset-heading"><h2 id="asset-heading">Release-Datei identifizieren</h2>
+<label for="asset">BasicMenu.prx auswählen</label><input id="asset" type="file">
+<output id="asset-result" for="asset" aria-live="polite">Der SHA-256-Vergleich erkennt die beiden Upstream-Releases vom 26. November 2026.</output></section>
+<noscript>Für die lokale Dateiauswertung benötigt der Browser JavaScript und WebAssembly. Die schriftlichen Ergebnisse stehen in STATUS.md.</noscript>
+</main>
+<script>
+/*__READER__*/
+const catalog = /*__RELEASES__*/;
+const wasmBytes = Uint8Array.from(atob("/*__WASM__*/"), char => char.charCodeAt(0));
+let readerPromise;
+function fileInput(id, initial, run) {
+    const picker = document.getElementById(id);
+    const output = document.getElementById(id + "-result");
+    let generation = 0;
+    picker.addEventListener("change", async () => {
+        const selected = ++generation;
+        const file = picker.files[0];
+        if (!file) { output.textContent = initial; return; }
+        output.textContent = "Die Datei wird lokal gelesen …";
+        try {
+            if (file.size > 4 * 1024 * 1024) throw new Error("Datei zu groß. Die Grenze beträgt 4 MiB.");
+            const result = await run(new Uint8Array(await file.arrayBuffer()));
+            if (generation === selected) output.textContent = result;
+        } catch (error) {
+            if (generation === selected) output.textContent = "Auswertung abgebrochen. " + error.message;
+        }
+    });
+}
+fileInput("log", "Kein Protokoll ausgewählt.", async bytes => {
+    if (typeof WebAssembly === "undefined") throw new Error("Dieser Browser unterstützt kein WebAssembly.");
+    if (!readerPromise) readerPromise = createLogReader(wasmBytes);
+    return describe((await readerPromise).parse(bytes));
+});
+fileInput("asset", "Keine Release-Datei ausgewählt.", async bytes => {
+    if (!globalThis.crypto?.subtle) throw new Error("Dieser Browser stellt SHA-256 beim lokalen Öffnen nicht bereit.");
+    const { tag, hash } = await inspectAsset(bytes, catalog);
+    return (tag ? "Originaldatei aus " + tag + " erkannt. Beide Releases nennen nur Firmware 7.40 als getestet."
+                : "Kein Treffer bei den zwei geprüften Originaldateien.") + "\n\nSHA-256: " + hash;
+});
+</script>
+</html>

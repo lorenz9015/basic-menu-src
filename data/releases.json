@@ -1,0 +1,16 @@
+[
+  {
+    "tag": "v1.1-2026-11-26",
+    "commit": "367aee83464d939c0a02ae8371e160daca562888",
+    "assetId": 797770227,
+    "bytes": 221265,
+    "sha256": "700ea24e22e691fc046ef12bb56c13d935a28ae59722c0c3edaa20bab8c2b9ee"
+  },
+  {
+    "tag": "v1.0-2026-11-26",
+    "commit": "e58839d8f77ec086c8160f3eda798507b00a85c3",
+    "assetId": 795266294,
+    "bytes": 47041,
+    "sha256": "904afd8ce3886a7b736d89bc2e9580e9cee41859ee7fb03244502be4fa2d597c"
+  }
+]
