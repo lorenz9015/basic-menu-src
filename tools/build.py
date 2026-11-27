@@ -16,7 +16,7 @@ def build(out):
     flags = [
         "--target=wasm32", "-std=c++17", "-Oz", "-Wall", "-Wextra", "-Wpedantic", "-Werror",
         "-ffreestanding", "-fno-exceptions", "-fno-rtti", "-fno-ident", "-nostdlib",
-        "-Wl,--no-entry", "-Wl,--strip-all", "-Wl,--import-undefined",
+        "-Wl,--no-entry", "-Wl,--strip-all",
         "-Wl,--export=log_input", "-Wl,--export=log_capacity", "-Wl,--export=inspect_log",
         "-Wl,--export-memory",
     ]

@@ -1,6 +1,6 @@
 // Shared by the local browser document and the WebAssembly integration tests.
 function emptySession() {
-    return { records: 0, events: new Set(), network: null, incomplete: 0 };
+    return { records: 0, events: new Set(), network: null, lastNetworkError: null, incomplete: 0 };
 }
 
 async function createLogReader(moduleBytes) {
@@ -30,6 +30,7 @@ async function createLogReader(moduleBytes) {
         current.events.add(name);
         if (["reported-offline", "online", "network-error"].includes(name)) {
             current.network = { name, stateCode: stateCode >>> 0, reachCode: reachCode >>> 0 };
+            if (name === "network-error") current.lastNetworkError = current.network;
         }
     }
 
@@ -79,10 +80,15 @@ function describe(report) {
         if (report.events.has(key)) lines.push(text);
     }
     if (report.events.has("online")) lines.push("Das Menü meldete in diesem Abschnitt mindestens einmal eine erreichbare PSN-Verbindung und gesperrte Funktionen.");
-    if (report.events.has("network-error")) lines.push("Mindestens eine PSN-Abfrage schlug fehl. Ein solcher Fehler kann im Original als offline erscheinen.");
+    const hex = value => "0x" + value.toString(16).padStart(8, "0");
+    if (report.lastNetworkError) {
+        const err = report.lastNetworkError;
+        lines.push("Die letzte fehlgeschlagene PSN-Abfrage lieferte " + hex(err.stateCode) +
+            " für den Status und " + hex(err.reachCode) +
+            " für die Erreichbarkeit. Ein solcher Fehler kann im Original als offline erscheinen.");
+    }
     if (report.network) {
         const names = { "reported-offline": "vom Menü als offline gemeldet", online: "vom Menü als online gemeldet", "network-error": "unbestimmt" };
-        const hex = value => "0x" + value.toString(16).padStart(8, "0");
         lines.push("Letzte protokollierte PSN-Abfrage: " + names[report.network.name] +
             ". Rückgabecodes für Status und Erreichbarkeit: " + hex(report.network.stateCode) + " / " +
             hex(report.network.reachCode) + ".");

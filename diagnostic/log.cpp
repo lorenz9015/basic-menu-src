@@ -4,7 +4,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifdef __wasm__
+extern "C" __attribute__((import_module("env"), import_name("observed")))
+void observed(const char* event, uint32_t state_code, uint32_t reach_code);
+#else
 extern "C" void observed(const char* event, uint32_t state_code, uint32_t reach_code);
+#endif
 
 namespace {
 constexpr size_t max_file = 4u * 1024 * 1024;
@@ -59,6 +64,26 @@ struct Cursor {
     }
 };
 
+bool build_stamp(Cursor c) {
+    constexpr const char* months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    bool month_found = false;
+    for (auto month : months) {
+        if (c.take(month)) { month_found = true; break; }
+    }
+    if (!month_found || !c.take(" ") || c.end - c.pos != 16) return false;
+    const auto* p = c.pos;
+    auto digit = [](unsigned char b) { return b >= '0' && b <= '9'; };
+    auto pair = [&](size_t at) { return (p[at] - '0') * 10 + (p[at + 1] - '0'); };
+    if (p[2] != ' ' || p[7] != ' ' || p[10] != ':' || p[13] != ':') return false;
+    for (size_t i = 0; i < 16; ++i) {
+        if (i == 2 || i == 7 || i == 10 || i == 13 || (i == 0 && p[i] == ' ')) continue;
+        if (!digit(p[i])) return false;
+    }
+    const int day = p[0] == ' ' ? p[1] - '0' : pair(0);
+    return day >= 1 && day <= 31 && pair(8) < 24 && pair(11) < 60 && pair(14) < 60;
+}
+
 void network(Cursor c) {
     uint64_t state = 0, reach = 0;
     if (!c.decimal() || !c.take(" (ret 0x") || !c.number(16, 8, &state) ||
@@ -95,7 +120,7 @@ void classify(Cursor c) {
     if (!c.take("] ")) return;
 
     if (c.take("Basic Menu, built ")) {
-        if (c.pos != c.end) observed("start", 0, 0);
+        if (build_stamp(c)) observed("start", 0, 0);
     } else if (c.take("eboot size 0x")) {
         if (c.number(16, 16) && c.take(" != expected 0x") && c.number(16, 16) &&
             c.rest_is(" - features off")) observed("size-mismatch", 0, 0);

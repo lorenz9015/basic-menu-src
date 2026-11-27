@@ -44,6 +44,15 @@ test("history keeps intermittent errors and online state after a later offline m
     const r = (await reader).parse(encode(log.map(stamp).join("")));
     assert.equal(r.network.name, "reported-offline");
     assert.ok(r.events.has("online") && r.events.has("network-error"));
+    assert.equal(r.lastNetworkError.stateCode, 1);
+    assert.match(describe(r), /0x00000001/);
+});
+test("an incomplete or malformed build marker cannot hide an earlier failure", async () => {
+    const entries = ["Basic Menu, built Mar  7 2026 02:03:04", "cheat table unreadable",
+        "Basic Menu, built nonsense", "Basic Menu, built Nov 26 2026 24:00:00"];
+    const r = (await reader).parse(encode(entries.map(stamp).join("")));
+    assert.equal(r.starts, 1);
+    assert.ok(r.events.has("table-unreadable"));
 });
 test("partial and overlong lines do not invent successes", async () => {
     const r = (await reader).parse(encode(stamp("x".repeat(2000)) + stamp("hook fake: ok").trimEnd()));
