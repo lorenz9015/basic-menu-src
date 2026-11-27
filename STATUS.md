@@ -16,6 +16,8 @@
 | Funktions-, Abbruch- und Deinstallationstest auf der PS5 | Ausstehend. Keine Änderungen an deiner Konsole. |
 | Abschließender Hardwaretest | Unverbraucht. Die Bedingungen für einen sinnvollen Einzeldurchlauf sind derzeit nicht erfüllt. |
 
+Die Hostdiagnose bestand den unabhängigen Lauf auf GitHub einschließlich Öffnen der HTML-Datei über eine lokale Datei-URL. Das dort gebaute Diagnose-ZIP und der lokale Neubau zum selben Commit ergaben dieselbe SHA-256-Prüfsumme. Die Nachweise für das veröffentlichte Paket stehen zusätzlich in den Release-Notizen. [Gehosteter Prüflauf](https://github.com/lorenz9015/basic-menu-src/actions/runs/45996007016)
+
 ## Offene Fehler und Nachweise
 
 | Punkt | Befund | Was für eine Freigabe fehlt |
